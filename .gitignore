@@ -3,3 +3,6 @@
 /JavaApplication12/build/
 *.bak
 .DS_Store
+/MotorPH_EmployeeApp/build/
+/MotorPH_EmployeeApp/dist/
+/MotorPH_EmployeeApp/nbproject/private/
