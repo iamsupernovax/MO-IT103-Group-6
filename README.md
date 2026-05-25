@@ -1,3 +1,17 @@
+MO-IT103L - Group 6
+Section: H1101
+
+Members:
+John Linnard Dumdum (lr.jldumdum@mmdc.mcl.edu.ph)
+Arlynne Alvarez (lr.aalvarez@mmdc.mcl.edu.ph)
+Katrina Liporada (lr.kliporada@mmdc.mcl.edu.ph)
+Rizalyn Novales (lr.rnovales@mmdc.mcl.edu.ph)
+Rose Ann Soriano (lr.rasoriano@mmdc.mcl.edu.ph)
+
+
+
+
+
 # MotorPH Employee App
 
 A Java Swing GUI application for managing MotorPH employee information and payroll.
@@ -24,5 +38,4 @@ Implements **MPHCR01 - Feature 1** of the MO-IT103 Computer Programming 2 change
 3. Right-click then choose **Run** (or press F6).
 4. Log in with username `employee` or `payroll_staff` and password `12345`.
 
-## Authors
-MO-IT103 Group 6
+
