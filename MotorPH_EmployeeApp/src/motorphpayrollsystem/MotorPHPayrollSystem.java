@@ -4,7 +4,9 @@
  */
 package motorphpayrollsystem;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Duration;
@@ -21,10 +23,75 @@ import java.util.Scanner;
 
 public class MotorPHPayrollSystem {
 
-    static String EMPLOYEE_CSV = "src/motorphpayrollsystem/MotorPH_Employee Data - Employee Details.csv";
-    static String ATTENDANCE_CSV = "src/motorphpayrollsystem/MotorPH_Employee Data - Attendance Record.csv";
+    // CSV filenames only — full path is resolved at runtime so the app works
+    // in NetBeans, VSCode, IntelliJ, or when run as a JAR on any computer.
+    static final String EMPLOYEE_CSV_NAME  = "MotorPH_Employee Data - Employee Details.csv";
+    static final String ATTENDANCE_CSV_NAME = "MotorPH_Employee Data - Attendance Record.csv";
+
+    static final String EMPLOYEE_CSV  = resolveDataPath(EMPLOYEE_CSV_NAME);
+    static final String ATTENDANCE_CSV = resolveDataPath(ATTENDANCE_CSV_NAME);
 
     static DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+
+    /**
+     * Finds a CSV file by trying several candidate locations in order:
+     *
+     *  1. data/<name>  relative to working directory
+     *     → works when project is cloned from GitHub and opened in VSCode / any IDE
+     *       whose working directory is the project root.
+     *
+     *  2. data/<name>  relative to the JAR file (or build/classes)
+     *     → works when running the compiled JAR from the dist/ folder.
+     *
+     *  3. src/motorphpayrollsystem/<name>  relative to working directory
+     *     → legacy fallback for NetBeans (original location).
+     *
+     *  4. <name>  relative to working directory (flat layout, last resort)
+     */
+    static String resolveDataPath(String filename) {
+        // Candidate 1: data/ next to working directory (GitHub clone / VSCode)
+        File candidate = new File("data" + File.separator + filename);
+        if (candidate.exists()) {
+            return candidate.getAbsolutePath();
+        }
+
+        // Candidate 2: data/ next to the JAR / build output directory
+        try {
+            File codeLocation = new File(
+                MotorPHPayrollSystem.class
+                    .getProtectionDomain()
+                    .getCodeSource()
+                    .getLocation()
+                    .toURI()
+            );
+            // JAR → parent is dist/  |  classes dir → go up two levels to project root
+            File base = codeLocation.isDirectory()
+                ? codeLocation.getParentFile().getParentFile()
+                : codeLocation.getParentFile();
+
+            candidate = new File(base, "data" + File.separator + filename);
+            if (candidate.exists()) {
+                return candidate.getAbsolutePath();
+            }
+
+            // Candidate 3: src/motorphpayrollsystem/ next to project root (NetBeans legacy)
+            candidate = new File(base, "src" + File.separator + "motorphpayrollsystem" + File.separator + filename);
+            if (candidate.exists()) {
+                return candidate.getAbsolutePath();
+            }
+        } catch (URISyntaxException e) {
+            // ignore; fall through to final fallback
+        }
+
+        // Candidate 4: flat file next to working directory (bare last resort)
+        candidate = new File(filename);
+        if (candidate.exists()) {
+            return candidate.getAbsolutePath();
+        }
+
+        // Nothing found — return the data/ path anyway so the error message is clear
+        return "data" + File.separator + filename;
+    }
 
     // ================= MAIN PROGRAM =================
     // Handles program flow: login, role selection, and menu navigation
@@ -37,7 +104,8 @@ public class MotorPHPayrollSystem {
 
         // If no employees found, stop execution
         if (employees.isEmpty()) {
-            System.out.println("No employees loaded. Check EMPLOYEE_CSV path/name.");
+            System.out.println("No employees loaded. Check that the CSV files are in the 'data/' folder.");
+            System.out.println("Tried path: " + EMPLOYEE_CSV);
             return;
         }
 
@@ -72,7 +140,7 @@ public class MotorPHPayrollSystem {
                     System.out.println("Invalid choice.");
                 }
 
-            // ================= PAYROLL STAFF VIEW =================    
+            // ================= PAYROLL STAFF VIEW =================
             } else if (role.equals("PAYROLL")) {
                 System.out.println("\nIf username is: payroll_staff");
                 System.out.println("Display options:");
@@ -216,7 +284,7 @@ public class MotorPHPayrollSystem {
             printPayrollForCutoff(month, hours1, hours2, payroll, secondEnd);
         }
     }
-    
+
     static double[] calculatePayrollForCutoff(double hours1, double hours2, double hourlyRate) {
 
         double gross1 = hours1 * hourlyRate;
@@ -247,9 +315,9 @@ public class MotorPHPayrollSystem {
             totalDeductions
         };
     }
-    
+
     // ================= PAYROLL OUTPUT DISPLAY =================
-    // Displays computed payroll details for both cutoffs (1–15 and 16–end of month)   
+    // Displays computed payroll details for both cutoffs (1–15 and 16–end of month)
     static void printPayrollForCutoff(int month, double hours1, double hours2, double[] p, LocalDate secondEnd) {
 
         double gross1 = p[0];
@@ -351,10 +419,10 @@ public class MotorPHPayrollSystem {
 
     // ================= DEDUCTIONS =================
     // Contains all government-mandated deductions and tax computations
-    
+
     // Computes SSS contribution based on salary bracket
     static double computeSSS(double monthlySalary) {
-        
+
         // Uses salary ranges (brackets) with fixed contribution values
         if (monthlySalary < 3250) {
             return 135.00;
@@ -488,14 +556,14 @@ public class MotorPHPayrollSystem {
         if (monthlySalary < 24750) {
             return 1102.50;
         }
-        
+
         // Maximum contribution cap
         return 1125.00;
     }
 
     // Computes PhilHealth contribution
     static double computePhilHealth(double monthlySalary) {
-        
+
         // 3% of monthly salary
         double premium = monthlySalary * 0.03;
 
@@ -503,7 +571,7 @@ public class MotorPHPayrollSystem {
         if (premium < 300) {
             premium = 300;
         }
-        
+
         // Employee pays 50% of total premium
         if (premium > 1800) {
             premium = 1800;
@@ -535,7 +603,7 @@ public class MotorPHPayrollSystem {
 
     // Computes withholding tax using TRAIN law brackets
     static double computeWithholdingTax(double taxableMonthly) {
-        
+
         // Progressive tax system (higher income = higher tax rate)
         if (taxableMonthly <= 20832) {
             return 0;
@@ -589,7 +657,7 @@ public class MotorPHPayrollSystem {
 
             // Get employee number (primary key)
             String empNo = getSafe(row, idxEmpNo);
-            
+
             // Skip rows without employee number
             if (empNo.isEmpty()) {
                 continue;
@@ -676,12 +744,12 @@ public class MotorPHPayrollSystem {
 
     // ================= HELPERS =================
     // Utility methods for parsing, formatting, and safe data handling
-    
+
     // Finds column index based on possible header names
     static int findIndex(String[] headers, String... options) {
         for (int i = 0; i < headers.length; i++) {
-            String h = headers[i].trim().replace("\uFEFF", "");
-            
+            String h = headers[i].trim().replace("﻿", "");
+
             // Check against all possible header name variations
             for (String opt : options) {
                 if (h.equalsIgnoreCase(opt)) {
@@ -689,14 +757,14 @@ public class MotorPHPayrollSystem {
                 }
             }
         }
-        
+
         // Return -1 if column not found
         return -1;
     }
 
     // Safely retrieves value from array (prevents index errors)
     static String getSafe(String[] arr, int idx) {
-        
+
         // If index is invalid, return empty string instead of crashing
         if (idx < 0 || idx >= arr.length) {
             return "";
@@ -716,7 +784,7 @@ public class MotorPHPayrollSystem {
             // Toggle quote mode
             if (ch == '"') {
                 inQuotes = !inQuotes;
-                
+
             // Only split on commas outside quotes
             } else if (ch == ',' && !inQuotes) {
                 parts.add(current.toString());
@@ -769,7 +837,7 @@ public class MotorPHPayrollSystem {
         // Remove commas (e.g., "12,000" → "12000")
         s = s.replace(",", "").trim();
         if (s.isEmpty()) {
-            return 0; 
+            return 0;
         }
 
         try {
