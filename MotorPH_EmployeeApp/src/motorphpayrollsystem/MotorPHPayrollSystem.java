@@ -23,8 +23,6 @@ import java.util.Scanner;
 
 public class MotorPHPayrollSystem {
 
-    // CSV filenames only — full path is resolved at runtime so the app works
-    // in NetBeans, VSCode, IntelliJ, or when run as a JAR on any computer.
     static final String EMPLOYEE_CSV_NAME  = "MotorPH_Employee Data - Employee Details.csv";
     static final String ATTENDANCE_CSV_NAME = "MotorPH_Employee Data - Attendance Record.csv";
 
@@ -729,10 +727,9 @@ public class MotorPHPayrollSystem {
                 continue;
             }
 
-            // Store cleaned attendance record
             String[] att = new String[4];
             att[0] = empNo;
-            att[1] = date.toString(); // standard ISO format
+            att[1] = date.toString();
             att[2] = inStr;
             att[3] = outStr;
 
@@ -798,7 +795,7 @@ public class MotorPHPayrollSystem {
         return parts.toArray(new String[0]);
     }
 
-    // Parses time with multiple formats (flexible input handling)
+    // Parses time with multiple formats
     static LocalTime parseTimeFlexible(String s) {
         if (s == null) {
             return null;
@@ -834,7 +831,7 @@ public class MotorPHPayrollSystem {
             return 0;
         }
 
-        // Remove commas (e.g., "12,000" → "12000")
+        // Remove commas (e.g., "12,000" to "12000")
         s = s.replace(",", "").trim();
         if (s.isEmpty()) {
             return 0;

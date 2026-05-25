@@ -346,12 +346,29 @@ public class MotorPHPayrollGUI {
         // Translate month name to month number (1-12)
         int monthInt = monthNameToNumber(monthName);
 
-        // ---- Cross-reference with CSV (only when Employee Number given) ----
+        // ---- Cross-reference with CSV (by Employee Number OR Name) ----
         String csvEmpKey = "";
         String[] csvEmp = null;
+
+        // First, try lookup by Employee Number
         if (empNoProvided && employees != null) {
             csvEmpKey = String.valueOf(empNoInt);
             csvEmp = employees.get(csvEmpKey);
+        }
+
+        // If no match by number and name was provided, try lookup by name
+        if (csvEmp == null && !empName.isEmpty() && employees != null) {
+            int matchCount = countEmployeeNameMatches(empName);
+            if (matchCount > 1) {
+                showError("Multiple employees match the name \"" + empName + "\".\n"
+                        + "Please also enter the Employee Number to identify which one.");
+                return;
+            } else if (matchCount == 1) {
+                csvEmp = searchEmployeeByName(empName);
+                if (csvEmp != null) {
+                    csvEmpKey = csvEmp[0];
+                }
+            }
         }
 
         String csvMatchStatus;
@@ -362,6 +379,9 @@ public class MotorPHPayrollGUI {
         } else if (empNoProvided) {
             csvMatchStatus = "No matching record found in CSV "
                     + "for Employee Number " + empNoInt + ".";
+        } else if (!empName.isEmpty()) {
+            csvMatchStatus = "No matching record found in CSV "
+                    + "for Employee Name \"" + empName + "\".";
         } else {
             csvMatchStatus = "Skipped (Employee Number was not provided).";
         }
@@ -569,6 +589,43 @@ public class MotorPHPayrollGUI {
                 message,
                 "Input Error",
                 JOptionPane.ERROR_MESSAGE);
+    }
+
+    // Counts how many employees match the given name (case-insensitive).
+    static int countEmployeeNameMatches(String searchName) {
+        String nameLower = searchName.toLowerCase().trim();
+        int count = 0;
+
+        for (String empNo : employees.keySet()) {
+            String[] emp = employees.get(empNo);
+            String firstName = emp[2].toLowerCase().trim();
+            String lastName = emp[1].toLowerCase().trim();
+            String fullName = (lastName + " " + firstName).toLowerCase().trim();
+
+            if (fullName.contains(nameLower) || firstName.contains(nameLower) || lastName.contains(nameLower)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    // Searches for an employee by name (First + Last name, case-insensitive).
+    // Returns the employee record if found, null otherwise.
+    static String[] searchEmployeeByName(String searchName) {
+        String nameLower = searchName.toLowerCase().trim();
+
+        for (String empNo : employees.keySet()) {
+            String[] emp = employees.get(empNo);
+            String firstName = emp[2].toLowerCase().trim();
+            String lastName = emp[1].toLowerCase().trim();
+            String fullName = (lastName + " " + firstName).toLowerCase().trim();
+
+            // Match if search name matches full name or just first or just last
+            if (fullName.contains(nameLower) || firstName.contains(nameLower) || lastName.contains(nameLower)) {
+                return emp;
+            }
+        }
+        return null;
     }
 
     // Makes a button look nice and colored.
