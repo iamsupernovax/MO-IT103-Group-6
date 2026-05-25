@@ -33,7 +33,7 @@ Implements **MPHCR01 - Feature 1** of the MO-IT103 Computer Programming 2 change
 - `JavaApplication12/src/motorphpayrollsystem/MotorPH_Employee Data - Attendance Record.csv` - attendance records
 
 ## How to Run
-1. Open the `JavaApplication12` project in NetBeans.
+1. Open the `MotorPH_EmployeeApp` project in NetBeans.
 2. Right-click the project then choose **Clean and Build**.
 3. Right-click then choose **Run** (or press F6).
 4. Log in with username `employee` or `payroll_staff` and password `12345`.
