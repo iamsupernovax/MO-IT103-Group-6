@@ -2,20 +2,18 @@ MO-IT103L - Group 6
 Section: H1101
 
 Members:
-John Linnard Dumdum (lr.jldumdum@mmdc.mcl.edu.ph)
-Arlynne Alvarez (lr.aalvarez@mmdc.mcl.edu.ph)
-Katrina Liporada (lr.kliporada@mmdc.mcl.edu.ph)
-Rizalyn Novales (lr.rnovales@mmdc.mcl.edu.ph)
+John Linnard Dumdum (lr.jldumdum@mmdc.mcl.edu.ph)\
+Arlynne Alvarez (lr.aalvarez@mmdc.mcl.edu.ph)\
+Katrina Liporada (lr.kliporada@mmdc.mcl.edu.ph)\
+Rizalyn Novales (lr.rnovales@mmdc.mcl.edu.ph)\
 Rose Ann Soriano (lr.rasoriano@mmdc.mcl.edu.ph)
-
-
 
 
 
 # MotorPH Employee App
 
 A Java Swing GUI application for managing MotorPH employee information and payroll.
-Implements **MPHCR01 - Feature 1** of the MO-IT103 Computer Programming 2 change requests.
+Implements **MPHCR01 - Feature 1** of the MO-IT103 Computer Programming 2, change requests.
 
 ## Features
 - Login screen with username and password
@@ -24,13 +22,12 @@ Implements **MPHCR01 - Feature 1** of the MO-IT103 Computer Programming 2 change
 - Input validation with try/catch error handling
 - Cross-reference with CSV employee data
 - Computed payroll summary for the selected month and year
-- Colored buttons that work consistently on Windows, macOS, and Linux
 
 ## Project Structure
-- `JavaApplication12/src/motorphpayrollsystem/MotorPHPayrollGUI.java` - the GUI windows
-- `JavaApplication12/src/motorphpayrollsystem/MotorPHPayrollSystem.java` - the backend logic (CSV loading, payroll math)
-- `JavaApplication12/src/motorphpayrollsystem/MotorPH_Employee Data - Employee Details.csv` - employee records
-- `JavaApplication12/src/motorphpayrollsystem/MotorPH_Employee Data - Attendance Record.csv` - attendance records
+- `MotorPH_EmployeeApp/src/motorphpayrollsystem/MotorPHPayrollGUI.java` - the GUI windows
+- `MotorPH_EmployeeApp/src/motorphpayrollsystem/MotorPHPayrollSystem.java` - the backend logic (CSV loading, payroll math)
+- `MotorPH_EmployeeApp/src/motorphpayrollsystem/MotorPH_Employee Data - Employee Details.csv` - employee records
+- `MotorPH_EmployeeApp/src/motorphpayrollsystem/MotorPH_Employee Data - Attendance Record.csv` - attendance records
 
 ## How to Run
 1. Open the `MotorPH_EmployeeApp` project in NetBeans.
